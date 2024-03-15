@@ -1,0 +1,35 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Get artifact URL
+        id: get_artifact_url
+        run: |
+          url=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/artifacts | jq -r '.artifacts[0].archive_download_url')
+          echo "::set-output name=artifact_url::$url"
+
+      - name: Update Terraform configuration
+        run: |
+          url="${{ steps.get_artifact_url.outputs.artifact_url }}"
+          sed -i "s|WEBSITE_RUN_FROM_PACKAGE.*|WEBSITE_RUN_FROM_PACKAGE = \"$url\"|" main.tf
+
+      - name: Terraform Apply
+        run: terraform apply -var="website_run_from_package=${{ steps.get_artifact_url.outputs.artifact_url }}" tfplan
+        env:
+          TF_CLI_ARGS: "-input=false"  # Utilisé pour supprimer la demande d'approbation dans le processus d'application
