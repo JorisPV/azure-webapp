@@ -12,6 +12,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Change directory
+        run: cd /home/Joris/azure/terraform
+
       - name: Terraform Init
         run: terraform init
 
@@ -32,4 +35,4 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -var="website_run_from_package=${{ steps.get_artifact_url.outputs.artifact_url }}" tfplan
         env:
-          TF_CLI_ARGS: "-input=false"  # Utilisé pour supprimer la demande d'approbation dans le processus d'application
+          TF_CLI_ARGS: "-input=false"
