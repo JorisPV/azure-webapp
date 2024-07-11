@@ -24,4 +24,13 @@ jobs:
 
     - name: Apply Terraform
       working-directory: /home/joris/azure/terraform
-      run: terraform apply -auto-approve -lock=false
+      run: terraform apply -auto-approve
+
+    - name: Log in to Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure App Service
+      run: |
+        az webapp deployment source config --name tp-azure-joris-ameline --resource-group webapp-rg --repo-url https://github.com/JorisPV/azure-webapp --branch main --manual-integration
