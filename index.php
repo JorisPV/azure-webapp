@@ -19,7 +19,7 @@
     </header>
     <main>
         <section id="about">
-            <h1>JORIS</h1>
+            <h1>JORIS - IT'S WORK</h1>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex.</p>
             <img src="azure-image1.jpg" alt="Azure Image 1">
         </section>
