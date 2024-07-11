@@ -9,6 +9,8 @@ terraform {
 
 provider "azurerm" {
   features {}
+
+  tenant_id = "ddce52d8-ace7-48a6-a26c-23ceadd03e52"
 }
 
 resource "azurerm_resource_group" "Azure" {
@@ -56,7 +58,6 @@ resource "azurerm_linux_web_app" "linux-azure" {
     }
     always_on     = false
     http2_enabled = true
-    scm_type      = "LocalGit"
   }
 
   identity {
@@ -128,8 +129,9 @@ resource "azurerm_application_gateway" "appgw" {
 
   ssl_certificate {
     name     = "exampleSslCert"
-    data     = filebase64("${path.module}/certificate.pfx")
-    password = "your-password"
+    # Uncomment this if you have the certificate file available
+    # data     = filebase64("${path.module}/certificate.pfx")
+    # password = "your-password"
   }
 
   waf_configuration {
