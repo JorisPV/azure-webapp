@@ -24,4 +24,4 @@ jobs:
 
     - name: Apply Terraform
       working-directory: /home/joris/azure/terraform
-      run: terraform apply -auto-approve
+      run: terraform apply -auto-approve -lock=false
