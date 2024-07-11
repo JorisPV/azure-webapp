@@ -25,7 +25,7 @@ resource "azurerm_service_plan" "appservice-plan" {
 }
 
 resource "azurerm_linux_web_app" "linux-web-app" {
-  name                = "tp-azure-joris-ameline"
+  name                = "tp-azure-ja"
   resource_group_name = azurerm_resource_group.webapp-rg.name
   location            = "westeurope"
   service_plan_id     = azurerm_service_plan.appservice-plan.id
