@@ -23,17 +23,28 @@
             background-color: white;
             font-family: Arial, sans-serif;
         }
-        #countdown {
+        #countdown-container {
+            text-align: center;
+        }
+        #event-name {
             font-size: 3em;
+        }
+        #countdown {
+            font-size: 2em;
         }
     </style>
 
     <script type="text/javascript">
         $(document).ready(function() {
+            var defaultDate = moment().add(1, 'days').set({hour: 18, minute: 0});
+            
             $('#datetimepicker').datetimepicker({
                 locale: 'fr',
-                format: 'DD/MM/YYYY HH:mm'
+                format: 'DD/MM/YYYY HH:mm',
+                defaultDate: defaultDate
             });
+
+            $('input[name="event"]').val("test");
 
             $('form').on('submit', function(e) {
                 e.preventDefault();
@@ -42,19 +53,20 @@
                 if (datetimeStr && eventName) {
                     var targetDate = datetimeStr.toDate();
                     $('#form-container').hide();
-                    $('#countdown').show();
-                    startCountdown(targetDate, eventName);
+                    $('#countdown-container').show();
+                    $('#event-name').text(eventName);
+                    startCountdown(targetDate);
                 }
             });
 
-            function startCountdown(targetDate, eventName) {
+            function startCountdown(targetDate) {
                 function updateCountdown() {
                     var now = new Date().getTime();
                     var distance = targetDate - now;
 
                     if (distance < 0) {
                         clearInterval(countdownInterval);
-                        $('#countdown').text(`${eventName} a déjà eu lieu !`);
+                        $('#countdown').text("L'événement a déjà eu lieu !");
                         return;
                     }
 
@@ -63,7 +75,7 @@
                     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                    $('#countdown').text(`Il reste ${days}j ${hours}h ${minutes}m ${seconds}s avant ${eventName}`);
+                    $('#countdown').text(`${days}j ${hours}h ${minutes}m ${seconds}s`);
                 }
 
                 updateCountdown();
@@ -100,6 +112,9 @@
             </div>
         </div>
     </div>
-    <div id="countdown" style="display: none;"></div>
+    <div id="countdown-container" style="display: none;">
+        <div id="event-name"></div>
+        <div id="countdown"></div>
+    </div>
 </body>
 </html>
