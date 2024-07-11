@@ -21,7 +21,7 @@ resource "azurerm_service_plan" "TP_Azure" {
   resource_group_name = azurerm_resource_group.Azure.name
   location            = "westeurope"
   os_type             = "Linux"
-  sku_name            = "S3"
+  sku_name            = "B1"
 }
 
 resource "azurerm_linux_web_app" "linux-azure" {
