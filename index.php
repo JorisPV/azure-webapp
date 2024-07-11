@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TP-Azure-Joris-Améline - TEST</title>
+    <title>TP-Azure</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,7 +19,7 @@
     </header>
     <main>
         <section id="about">
-            <h1>À propos de TP-Azure</h1>
+            <h1>JORIS</h1>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex.</p>
             <img src="azure-image1.jpg" alt="Azure Image 1">
         </section>
