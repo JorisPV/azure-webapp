@@ -20,17 +20,24 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: white;
+            background-color: #f0f8ff;
             font-family: Arial, sans-serif;
         }
         #countdown-container {
             text-align: center;
+            color: #007bff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            transition: transform 0.5s;
+        }
+        #countdown-container:hover {
+            transform: scale(1.05);
         }
         #event-name {
-            font-size: 3em;
+            font-size: 4em;
+            margin-bottom: 20px;
         }
         #countdown {
-            font-size: 2em;
+            font-size: 3em;
         }
     </style>
 
