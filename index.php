@@ -23,15 +23,12 @@
             background-color: #f0f8ff;
             font-family: Arial, sans-serif;
             overflow: hidden;
-            position: relative;
         }
         #countdown-container {
-            position: relative;
             text-align: center;
             color: #007bff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
             transition: transform 0.5s;
-            z-index: 10;
         }
         #countdown-container:hover {
             transform: scale(1.05);
@@ -42,25 +39,6 @@
         }
         #countdown {
             font-size: 3em;
-        }
-        #stars {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 5;
-        }
-        .star {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #ffd700;
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            pointer-events: none;
-            transition: transform 0.2s, top 0.5s, left 0.5s;
         }
     </style>
 
@@ -110,31 +88,6 @@
 
                 updateCountdown();
                 var countdownInterval = setInterval(updateCountdown, 1000);
-                activateStars();
-            }
-
-            function activateStars() {
-                var container = $('#stars');
-                for (var i = 0; i < 100; i++) {
-                    var star = $('<div class="star"></div>');
-                    container.append(star);
-                    setRandomPosition(star);
-                }
-
-                $('#countdown-container').on('mouseenter', function() {
-                    $('.star').each(function() {
-                        setRandomPosition($(this));
-                    });
-                });
-
-                function setRandomPosition(star) {
-                    var x = Math.random() * 100;
-                    var y = Math.random() * 100;
-                    star.css({
-                        left: `${x}vw`,
-                        top: `${y}vh`
-                    });
-                }
             }
         });
     </script>
@@ -170,7 +123,6 @@
     <div id="countdown-container" style="display: none;">
         <div id="event-name"></div>
         <div id="countdown"></div>
-        <div id="stars"></div>
     </div>
 </body>
 </html>
