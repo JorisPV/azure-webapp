@@ -22,6 +22,7 @@
             height: 100vh;
             background-color: #f0f8ff;
             font-family: Arial, sans-serif;
+            overflow: hidden;
         }
         #countdown-container {
             text-align: center;
@@ -38,6 +39,14 @@
         }
         #countdown {
             font-size: 3em;
+        }
+        .star {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ffd700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            pointer-events: none;
         }
     </style>
 
@@ -87,6 +96,21 @@
 
                 updateCountdown();
                 var countdownInterval = setInterval(updateCountdown, 1000);
+                activateStars();
+            }
+
+            function activateStars() {
+                $(document).on('mousemove', function(e) {
+                    var star = $('<div class="star"></div>');
+                    $('body').append(star);
+                    star.css({
+                        left: e.pageX + 'px',
+                        top: e.pageY + 'px'
+                    });
+                    setTimeout(function() {
+                        star.remove();
+                    }, 2000);
+                });
             }
         });
     </script>
