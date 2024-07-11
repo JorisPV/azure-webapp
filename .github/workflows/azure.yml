@@ -20,10 +20,7 @@ jobs:
     - name: Azure login
       uses: azure/login@v2
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v2
@@ -36,7 +33,7 @@ jobs:
 
     - name: Apply Terraform
       working-directory: /home/joris/azure/terraform
-      run: terraform apply -auto-approve -lock=false
+      run: terraform apply -auto-approve
 
     - name: Deploy to Azure App Service
       run: |
