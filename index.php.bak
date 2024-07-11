@@ -25,6 +25,7 @@
             overflow: hidden;
         }
         #countdown-container {
+            position: relative;
             text-align: center;
             color: #007bff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
@@ -39,6 +40,8 @@
         }
         #countdown {
             font-size: 3em;
+            position: relative;
+            z-index: 10;
         }
         .star {
             position: absolute;
@@ -47,6 +50,7 @@
             background-color: #ffd700;
             clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
             pointer-events: none;
+            transition: transform 0.2s;
         }
     </style>
 
@@ -100,16 +104,26 @@
             }
 
             function activateStars() {
-                $(document).on('mousemove', function(e) {
+                var container = $('#countdown-container');
+                for (var i = 0; i < 50; i++) {
                     var star = $('<div class="star"></div>');
-                    $('body').append(star);
+                    container.append(star);
+                    var x = Math.random() * 100;
+                    var y = Math.random() * 100;
                     star.css({
-                        left: e.pageX + 'px',
-                        top: e.pageY + 'px'
+                        left: `${x}%`,
+                        top: `${y}%`
                     });
-                    setTimeout(function() {
-                        star.remove();
-                    }, 2000);
+                }
+
+                container.on('mousemove', function() {
+                    $('.star').each(function() {
+                        var moveX = (Math.random() - 0.5) * 10;
+                        var moveY = (Math.random() - 0.5) * 10;
+                        $(this).css({
+                            transform: `translate(${moveX}px, ${moveY}px)`
+                        });
+                    });
                 });
             }
         });

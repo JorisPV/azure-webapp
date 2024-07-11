@@ -43,6 +43,16 @@
             position: relative;
             z-index: 10;
         }
+        #stars {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
         .star {
             position: absolute;
             width: 10px;
@@ -104,25 +114,33 @@
             }
 
             function activateStars() {
-                var container = $('#countdown-container');
+                var container = $('#stars');
                 for (var i = 0; i < 50; i++) {
                     var star = $('<div class="star"></div>');
                     container.append(star);
-                    var x = Math.random() * 100;
-                    var y = Math.random() * 100;
+                    var angle = Math.random() * 2 * Math.PI;
+                    var radius = 150 + Math.random() * 100;
+                    var x = Math.cos(angle) * radius;
+                    var y = Math.sin(angle) * radius;
                     star.css({
-                        left: `${x}%`,
-                        top: `${y}%`
+                        left: `calc(50% + ${x}px)`,
+                        top: `calc(50% + ${y}px)`
                     });
                 }
 
-                container.on('mousemove', function() {
+                $('#countdown-container').on('mouseenter', function() {
                     $('.star').each(function() {
                         var moveX = (Math.random() - 0.5) * 10;
                         var moveY = (Math.random() - 0.5) * 10;
                         $(this).css({
                             transform: `translate(${moveX}px, ${moveY}px)`
                         });
+                    });
+                });
+
+                $('#countdown-container').on('mouseleave', function() {
+                    $('.star').css({
+                        transform: 'translate(0, 0)'
                     });
                 });
             }
@@ -160,6 +178,7 @@
     <div id="countdown-container" style="display: none;">
         <div id="event-name"></div>
         <div id="countdown"></div>
+        <div id="stars"></div>
     </div>
 </body>
 </html>
