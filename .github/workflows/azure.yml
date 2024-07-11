@@ -19,7 +19,9 @@ jobs:
         terraform_wrapper: false
 
     - name: Initialize Terraform
+      working-directory: /home/joris/azure/terraform
       run: terraform init
 
     - name: Apply Terraform
+      working-directory: /home/joris/azure/terraform
       run: terraform apply -auto-approve
