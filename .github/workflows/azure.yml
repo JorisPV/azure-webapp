@@ -37,4 +37,4 @@ jobs:
 
     - name: Deploy to Azure App Service
       run: |
-        az webapp deployment source config --name tp-azure-joris-ameline --resource-group webapp-rg --repo-url https://github.com/JorisPV/azure-webapp --branch main --manual-integration
+        az webapp deployment source sync --name tp-azure-joris-ameline --resource-group webapp-rg
