@@ -23,6 +23,7 @@
             background-color: #f0f8ff;
             font-family: Arial, sans-serif;
             overflow: hidden;
+            position: relative;
         }
         #countdown-container {
             position: relative;
@@ -30,6 +31,7 @@
             color: #007bff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
             transition: transform 0.5s;
+            z-index: 10;
         }
         #countdown-container:hover {
             transform: scale(1.05);
@@ -40,18 +42,16 @@
         }
         #countdown {
             font-size: 3em;
-            position: relative;
-            z-index: 10;
         }
         #stars {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 200%;
-            height: 200%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 1;
+            overflow: hidden;
+            z-index: 5;
         }
         .star {
             position: absolute;
@@ -60,7 +60,7 @@
             background-color: #ffd700;
             clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
             pointer-events: none;
-            transition: transform 0.2s;
+            transition: transform 0.2s, top 0.5s, left 0.5s;
         }
     </style>
 
@@ -115,34 +115,26 @@
 
             function activateStars() {
                 var container = $('#stars');
-                for (var i = 0; i < 50; i++) {
+                for (var i = 0; i < 100; i++) {
                     var star = $('<div class="star"></div>');
                     container.append(star);
-                    var angle = Math.random() * 2 * Math.PI;
-                    var radius = 150 + Math.random() * 100;
-                    var x = Math.cos(angle) * radius;
-                    var y = Math.sin(angle) * radius;
-                    star.css({
-                        left: `calc(50% + ${x}px)`,
-                        top: `calc(50% + ${y}px)`
-                    });
+                    setRandomPosition(star);
                 }
 
                 $('#countdown-container').on('mouseenter', function() {
                     $('.star').each(function() {
-                        var moveX = (Math.random() - 0.5) * 10;
-                        var moveY = (Math.random() - 0.5) * 10;
-                        $(this).css({
-                            transform: `translate(${moveX}px, ${moveY}px)`
-                        });
+                        setRandomPosition($(this));
                     });
                 });
 
-                $('#countdown-container').on('mouseleave', function() {
-                    $('.star').css({
-                        transform: 'translate(0, 0)'
+                function setRandomPosition(star) {
+                    var x = Math.random() * 100;
+                    var y = Math.random() * 100;
+                    star.css({
+                        left: `${x}vw`,
+                        top: `${y}vh`
                     });
-                });
+                }
             }
         });
     </script>
