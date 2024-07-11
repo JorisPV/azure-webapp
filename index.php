@@ -69,7 +69,7 @@
 			?>
 				
 			<!-- Countdown Form -->
-			<form method="post" action="countdown.php">
+			<form method="post" action="index.php">
 			
 				<div class="form-group">
 					<label>Event Name:</label>
