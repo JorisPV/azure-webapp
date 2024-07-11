@@ -41,4 +41,4 @@ jobs:
 
     - name: Deploy to Azure App Service
       run: |
-        az webapp deployment source sync --name tp-azure-jpab --resource-group webapp-rg
+        az webapp deployment source sync --name tp-azure-jpab --resource-group Azure
