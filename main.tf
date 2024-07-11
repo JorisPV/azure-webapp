@@ -11,35 +11,35 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "webapp-rg" {
-  name     = "webapp-rg"
+resource "azurerm_resource_group" "Azure" {
+  name     = "Azure"
   location = "westeurope"
 }
 
-resource "azurerm_service_plan" "appservice-plan" {
-  name                = "appservice-plan"
-  resource_group_name = azurerm_resource_group.webapp-rg.name
+resource "azurerm_service_plan" "TP_Azure" {
+  name                = "TP_Azure"
+  resource_group_name = azurerm_resource_group.Azure.name
   location            = "westeurope"
   os_type             = "Linux"
   sku_name            = "F1"
 }
 
-resource "azurerm_linux_web_app" "linux-web-app" {
+resource "azurerm_linux_web_app" "linux-azure" {
   name                = "tp-azure-ja"
-  resource_group_name = azurerm_resource_group.webapp-rg.name
+  resource_group_name = azurerm_resource_group.Azure.name
   location            = "westeurope"
-  service_plan_id     = azurerm_service_plan.appservice-plan.id
+  service_plan_id     = azurerm_service_plan.TP_Azure.id
 
   site_config {
     application_stack {
-      php_version = "8.2" # Change to appropriate application and version
+      php_version = "8.2"
     }
-    always_on = false  # Explicitly set always_on to false
+    always_on = false
   }
 }
 
 resource "azurerm_app_service_source_control" "source_control" {
-  app_id                 = azurerm_linux_web_app.linux-web-app.id
+  app_id                 = azurerm_linux_web_app.linux-azure.id
   repo_url               = "https://github.com/JorisPV/azure-webapp"
   branch                 = "main"
   use_manual_integration = true
