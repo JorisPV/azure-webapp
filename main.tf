@@ -27,7 +27,7 @@ resource "azurerm_service_plan" "TP_Azure" {
 resource "azurerm_linux_web_app" "linux-azure" {
   name                = "tp-azure-jpab"
   resource_group_name = azurerm_resource_group.Azure.name
-  location            = "northeurope"
+  location            = azurerm_service_plan.TP_Azure.location
   service_plan_id     = azurerm_service_plan.TP_Azure.id
 
   site_config {
@@ -36,6 +36,10 @@ resource "azurerm_linux_web_app" "linux-azure" {
     }
     always_on = false
   }
+
+  depends_on = [
+    azurerm_service_plan.TP_Azure
+  ]
 }
 
 resource "azurerm_app_service_source_control" "source_control" {
