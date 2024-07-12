@@ -13,13 +13,13 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "Azure" {
   name     = "Azure"
-  location = "westeurope"
+  location = "francecentral"
 }
 
 resource "azurerm_service_plan" "TP_Azure" {
   name                = "TP_Azure"
   resource_group_name = azurerm_resource_group.Azure.name
-  location            = "westeurope"
+  location            = "francecentral"
   os_type             = "Linux"
   sku_name            = "B1"
 }
@@ -27,7 +27,7 @@ resource "azurerm_service_plan" "TP_Azure" {
 resource "azurerm_linux_web_app" "linux-azure" {
   name                = "tp-azure-jpab"
   resource_group_name = azurerm_resource_group.Azure.name
-  location            = "westeurope"
+  location            = "francecentral"
   service_plan_id     = azurerm_service_plan.TP_Azure.id
 
   site_config {

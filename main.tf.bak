@@ -16,22 +16,6 @@ resource "azurerm_resource_group" "Azure" {
   location = "westeurope"
 }
 
-resource "azurerm_key_vault" "keyvault" {
-  name                        = "tp-azure-keyvault"
-  location                    = azurerm_resource_group.Azure.location
-  resource_group_name         = azurerm_resource_group.Azure.name
-  enabled_for_disk_encryption = true
-  enabled_for_template_deployment = true
-  sku_name = "standard"
-}
-
-resource "azurerm_key_vault_secret" "github_token" {
-  name         = "github-token"
-  value        = var.github_auth_token
-  key_vault_id = azurerm_key_vault.example.id
-}
-
-
 resource "azurerm_service_plan" "TP_Azure" {
   name                = "TP_Azure"
   resource_group_name = azurerm_resource_group.Azure.name
