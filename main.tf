@@ -26,6 +26,56 @@ resource "azurerm_key_vault" "keyvault" {
   sku_name = "standard"
 }
 
+resource "azurerm_key_vault_access_policy" "policy_keyvault" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+
+  tenant_id = var.tenant_id
+  object_id = var.client_id
+
+  secret_permissions = [
+    "get",
+    "list",
+    "set",
+    "delete",
+    "recover",
+    "backup",
+    "restore",
+    "purge",
+  ]
+
+  key_permissions = [
+    "get",
+    "list",
+    "update",
+    "create",
+    "import",
+    "delete",
+    "recover",
+    "backup",
+    "restore",
+    "purge",
+  ]
+
+  certificate_permissions = [
+    "get",
+    "list",
+    "update",
+    "create",
+    "import",
+    "delete",
+    "recover",
+    "backup",
+    "restore",
+    "purge",
+    "managecontacts",
+    "manageissuers",
+    "getissuers",
+    "listissuers",
+    "setissuers",
+    "deleteissuers",
+  ]
+}
+
 resource "azurerm_key_vault_secret" "github_token" {
   name         = "github-token"
   value        = var.github_auth_token
@@ -63,7 +113,7 @@ resource "azurerm_app_service_source_control" "source_control" {
 
 resource "azurerm_source_control_token" "token_source" {
   type         = "GitHub"
-  token        = data.azurerm_key_vault_secret.github_token.value
+  token        = azurerm_key_vault_secret.github_token.value
 }
 
 data "azurerm_key_vault_secret" "github_token" {
