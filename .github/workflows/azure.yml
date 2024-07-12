@@ -12,7 +12,6 @@ permissions:
 jobs:
   tp-azure-deploiement:
     runs-on: self-hosted
-    needs: php-tests
 
     steps:
     - name: Checkout code
