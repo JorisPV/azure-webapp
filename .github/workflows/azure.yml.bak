@@ -22,16 +22,9 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         
-    - name: Remove existing main.tf if present
-      run: |
-        if [ -f /home/joris/azure/terraform/main.tf ]; then
-          rm /home/joris/azure/terraform/main.tf
-        fi
-
     - name: Download main.tf
       run: |
         curl -o /home/joris/azure/terraform/main.tf https://raw.githubusercontent.com/JorisPV/azure-webapp/main/main.tf
-        chmod 777 /home/joris/azure/terraform/main.tf
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v2
