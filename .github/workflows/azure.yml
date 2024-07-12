@@ -14,21 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: mbstring, xml
-        coverage: none
-
-    - name: Install Composer dependencies
-      run: composer install --no-progress --no-suggest --prefer-dist
-
-    - name: Run PHP Unit Tests
-      run: ./vendor/bin/phpunit --configuration phpunit.xml
+      - uses: actions/checkout@v3
+      - uses: php-actions/composer@v6
+      - run: vendor/bin/phpunit
 
   build-and-deploy:
     runs-on: self-hosted
