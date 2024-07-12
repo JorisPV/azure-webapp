@@ -28,9 +28,8 @@ resource "azurerm_key_vault" "keyvault" {
 resource "azurerm_key_vault_secret" "github_token" {
   name         = "github-token"
   value        = var.github_auth_token
-  key_vault_id = azurerm_key_vault.example.id
+  key_vault_id = azurerm_key_vault.keyvault.id
 }
-
 
 resource "azurerm_service_plan" "TP_Azure" {
   name                = "TP_Azure"
@@ -63,6 +62,10 @@ resource "azurerm_app_service_source_control" "source_control" {
 
 resource "azurerm_source_control_token" "token_source" {
   type         = "GitHub"
-  token        = var.github_auth_token
-  token_secret = var.github_auth_token
+  token        = data.azurerm_key_vault_secret.github_token.value
+}
+
+data "azurerm_key_vault_secret" "github_token" {
+  name         = azurerm_key_vault_secret.github_token.name
+  key_vault_id = azurerm_key_vault.keyvault.id
 }

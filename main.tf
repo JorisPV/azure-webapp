@@ -20,6 +20,7 @@ resource "azurerm_key_vault" "keyvault" {
   name                        = "tp-azure-keyvault"
   location                    = azurerm_resource_group.Azure.location
   resource_group_name         = azurerm_resource_group.Azure.name
+  tenant_id                   = var.tenant_id
   enabled_for_disk_encryption = true
   enabled_for_template_deployment = true
   sku_name = "standard"
