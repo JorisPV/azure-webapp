@@ -72,28 +72,22 @@ jobs:
         working-directory: /home/joris/azure/terraform
         run: |
           terraform plan -out=plan.tfplan
-          terraform show -json plan.tfplan | jq '.resource_changes | length > 0' > plan_has_changes.txt
-          echo "plan_has_changes=$(cat plan_has_changes.txt)" >> $GITHUB_ENV
+          echo "::set-output name=changes::$(terraform show -json plan.tfplan | jq '.resource_changes | length')"
 
       - name: Apply Terraform
         working-directory: /home/joris/azure/terraform
         run: terraform apply -auto-approve
-        if: env.plan_has_changes == 'true'
+        if: ${{ steps.plan.outputs.changes != '0' }}
 
   deploy-azure:
     runs-on: self-hosted
     needs: init-terraform
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2  # Fetch enough history to compare
-
       - name: Vérification des modifications dans index.php
         id: check-index
         run: |
-          if git diff --name-only HEAD~1 HEAD | grep -q 'index.php'; then
+          if git diff --name-only HEAD^ HEAD | grep -q 'index.php'; then
             echo "index_changed=true" >> $GITHUB_ENV
           else
             echo "index_changed=false" >> $GITHUB_ENV
