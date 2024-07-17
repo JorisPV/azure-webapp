@@ -10,8 +10,7 @@ permissions:
   contents: read
 
 jobs:
-
-  build-and-deploy:
+  tp-azure-deploiement:
     runs-on: self-hosted
 
     steps:
