@@ -10,41 +10,55 @@ permissions:
   contents: read
 
 jobs:
-  tp-azure-deploiement:
+  login-azure:
     runs-on: self-hosted
 
     steps:
-    - name: Checkout code
+    - name: Verification du code
       uses: actions/checkout@v3
 
-    - name: Azure login (self-hosted)
+    - name: Connexion service Azure
       run: |
         az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
-    - name: Remove existing main.tf if present
+  update-files:
+    runs-on: self-hosted
+
+    steps:
+    - name: Supprimer le fichier terraform
       run: |
         if [ -f /home/joris/azure/terraform/main.tf ]; then
           rm /home/joris/azure/terraform/main.tf
         fi
 
-    - name: Download main.tf
+    - name: Mise a jour du fichier main.tf
       run: |
         curl -o /home/joris/azure/terraform/main.tf https://raw.githubusercontent.com/JorisPV/azure-webapp/main/main.tf
         chmod 777 /home/joris/azure/terraform/main.tf
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_wrapper: false
+  init-terraform:
+    runs-on: self-hosted
+    needs: update-files
 
-    - name: Initialize Terraform
+    steps:
+
+    - name: Init Terraform
       working-directory: /home/joris/azure/terraform
       run: terraform init
+      
+    - name: Plan Terraform
+      working-directory: /home/joris/azure/terraform
+      run: terraform plan
 
     - name: Apply Terraform
       working-directory: /home/joris/azure/terraform
       run: terraform apply -auto-approve
 
-    - name: Deploy to Azure App Service
+  deploy-azure:
+    runs-on: self-hosted
+    needs: init-terraform
+
+    steps:
+    - name: Deploiement AppService
       run: |
         az webapp deployment source sync --name tp-azure-jpab --resource-group Azure

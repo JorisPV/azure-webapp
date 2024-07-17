@@ -17,9 +17,24 @@ jobs:
     - name: Verification du code
       uses: actions/checkout@v3
 
+    - name: Vérification des secrets Azure
+      run: |
+        if [ -z "${{ secrets.AZURE_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_CLIENT_SECRET }}" ] || [ -z "${{ secrets.AZURE_TENANT_ID }}" ]; then
+          echo "Un ou plusieurs secrets Azure ne sont pas définis. Merci de verifier sur github."
+          exit 1
+        fi
+
     - name: Connexion service Azure
       run: |
         az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+    - name: Vérification de la connexion Azure
+      run: |
+        if ! az account show > /dev/null; then
+          echo "Échec de la connexion à Azure."
+          exit 1
+        fi
+
 
   update-files:
     runs-on: self-hosted
@@ -31,10 +46,15 @@ jobs:
           rm /home/joris/azure/terraform/main.tf
         fi
 
-    - name: Mise a jour du fichier main.tf
+    - name: Télécharger main.tf
       run: |
         curl -o /home/joris/azure/terraform/main.tf https://raw.githubusercontent.com/JorisPV/azure-webapp/main/main.tf
-        chmod 777 /home/joris/azure/terraform/main.tf
+        if [ $? -ne 0 ]; then
+          echo "Échec du téléchargement de main.tf"
+          exit 1
+        fi
+        chmod 755 /home/joris/azure/terraform/main.tf
+
 
   init-terraform:
     runs-on: self-hosted
@@ -45,6 +65,10 @@ jobs:
     - name: Init Terraform
       working-directory: /home/joris/azure/terraform
       run: terraform init
+
+    - name: Validation du fichier Terraform
+      working-directory: /home/joris/azure/terraform
+      run: terraform validate
       
     - name: Plan Terraform
       working-directory: /home/joris/azure/terraform
@@ -62,3 +86,8 @@ jobs:
     - name: Deploiement AppService
       run: |
         az webapp deployment source sync --name tp-azure-jpab --resource-group Azure
+        
+    - name: Vérifier le statut de l'application
+      run: |
+        az webapp show --name tp-azure-jpab --resource-group Azure --query "state"
+
