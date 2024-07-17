@@ -14,78 +14,90 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Vérification des secrets Azure
+        run: |
+          if [ -z "${{ secrets.AZURE_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_CLIENT_SECRET }}" ] || [ -z "${{ secrets.AZURE_TENANT_ID }}" ]; then
+            echo "Un ou plusieurs secrets Azure ne sont pas définis. Merci de verifier sur github."
+            exit 1
+          fi
 
-    - name: Vérification des secrets Azure
-      run: |
-        if [ -z "${{ secrets.AZURE_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_CLIENT_SECRET }}" ] || [ -z "${{ secrets.AZURE_TENANT_ID }}" ]; then
-          echo "Un ou plusieurs secrets Azure ne sont pas définis. Merci de verifier sur github."
-          exit 1
-        fi
+      - name: Connexion service Azure
+        run: |
+          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
-    - name: Connexion service Azure
-      run: |
-        az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-
-    - name: Vérification de la connexion Azure
-      run: |
-        if ! az account show > /dev/null; then
-          echo "Échec de la connexion à Azure."
-          exit 1
-        fi
-
+      - name: Vérification de la connexion Azure
+        run: |
+          if ! az account show > /dev/null; then
+            echo "Échec de la connexion à Azure."
+            exit 1
+          fi
 
   update-files:
     runs-on: self-hosted
 
     steps:
-    - name: Supprimer le fichier terraform
-      run: |
-        if [ -f /home/joris/azure/terraform/main.tf ]; then
-          rm /home/joris/azure/terraform/main.tf
-        fi
+      - name: Supprimer le fichier terraform
+        run: |
+          if [ -f /home/joris/azure/terraform/main.tf ]; then
+            rm /home/joris/azure/terraform/main.tf
+          fi
 
-    - name: Télécharger main.tf
-      run: |
-        curl -o /home/joris/azure/terraform/main.tf https://raw.githubusercontent.com/JorisPV/azure-webapp/main/main.tf
-        if [ $? -ne 0 ]; then
-          echo "Échec du téléchargement de main.tf"
-          exit 1
-        fi
-        chmod 755 /home/joris/azure/terraform/main.tf
-
+      - name: Télécharger main.tf
+        run: |
+          curl -o /home/joris/azure/terraform/main.tf https://raw.githubusercontent.com/JorisPV/azure-webapp/main/main.tf
+          if [ $? -ne 0 ]; then
+            echo "Échec du téléchargement de main.tf"
+            exit 1
+          fi
+          chmod 755 /home/joris/azure/terraform/main.tf
 
   init-terraform:
     runs-on: self-hosted
     needs: update-files
 
+    outputs:
+      plan-has-changes: ${{ steps.plan.outputs.changes }}
+
     steps:
+      - name: Init Terraform
+        working-directory: /home/joris/azure/terraform
+        run: terraform init
 
-    - name: Init Terraform
-      working-directory: /home/joris/azure/terraform
-      run: terraform init
+      - name: Validation du fichier Terraform
+        working-directory: /home/joris/azure/terraform
+        run: terraform validate
 
-    - name: Validation du fichier Terraform
-      working-directory: /home/joris/azure/terraform
-      run: terraform validate
-      
-    - name: Plan Terraform
-      working-directory: /home/joris/azure/terraform
-      run: terraform plan
+      - name: Plan Terraform
+        id: plan
+        working-directory: /home/joris/azure/terraform
+        run: |
+          terraform plan -out=plan.tfplan
+          echo "::set-output name=changes::$(terraform show -json plan.tfplan | jq '.resource_changes | length')"
 
-    - name: Apply Terraform
-      working-directory: /home/joris/azure/terraform
-      run: terraform apply -auto-approve
+      - name: Apply Terraform
+        working-directory: /home/joris/azure/terraform
+        run: terraform apply -auto-approve
+        if: ${{ steps.plan.outputs.changes != '0' }}
 
   deploy-azure:
     runs-on: self-hosted
     needs: init-terraform
 
     steps:
-    - name: Deploiement AppService
-      run: |
-        az webapp deployment source sync --name tp-azure-jpab --resource-group Azure
-        
-    - name: Vérifier le statut de l'application
-      run: |
-        az webapp show --name tp-azure-jpab --resource-group Azure --query "state"
+      - name: Vérification des modifications dans index.php
+        id: check-index
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -q 'index.php'; then
+            echo "index_changed=true" >> $GITHUB_ENV
+          else
+            echo "index_changed=false" >> $GITHUB_ENV
+          fi
 
+      - name: Deploiement AppService
+        run: |
+          az webapp deployment source sync --name tp-azure-jpab --resource-group Azure
+        if: env.index_changed == 'true'
+
+      - name: Vérifier le statut de l'application
+        run: |
+          az webapp show --name tp-azure-jpab --resource-group Azure --query "state"
