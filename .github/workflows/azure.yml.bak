@@ -72,17 +72,22 @@ jobs:
         working-directory: /home/joris/azure/terraform
         run: |
           terraform plan -out=plan.tfplan
-          terraform show -json plan.tfplan | jq '.resource_changes | length > 0' > plan_has_changes.txt
-          echo "plan_has_changes=$(cat plan_has_changes.txt)" >> $GITHUB_ENV
+          terraform show -json plan.tfplan | jq -e '.resource_changes | length > 0' > plan_has_changes.txt || echo "false" > plan_has_changes.txt
+          echo "::set-output name=changes::$(cat plan_has_changes.txt)"
 
+  apply-terraform:
+    runs-on: self-hosted
+    needs: init-terraform
+
+    steps:
       - name: Apply Terraform
+        if: ${{ needs.init-terraform.outputs.plan-has-changes == 'true' }}
         working-directory: /home/joris/azure/terraform
         run: terraform apply -auto-approve
-        if: env.plan_has_changes == 'true'
 
   deploy-azure:
     runs-on: self-hosted
-    needs: init-terraform
+    needs: apply-terraform
 
     steps:
       - name: Checkout Code

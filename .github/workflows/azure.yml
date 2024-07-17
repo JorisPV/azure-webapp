@@ -34,6 +34,7 @@ jobs:
 
   update-files:
     runs-on: self-hosted
+    needs: login-azure
 
     steps:
       - name: Supprimer le fichier terraform
@@ -68,20 +69,10 @@ jobs:
         run: terraform validate
 
       - name: Plan Terraform
-        id: plan
         working-directory: /home/joris/azure/terraform
-        run: |
-          terraform plan -out=plan.tfplan
-          terraform show -json plan.tfplan | jq -e '.resource_changes | length > 0' > plan_has_changes.txt || echo "false" > plan_has_changes.txt
-          echo "::set-output name=changes::$(cat plan_has_changes.txt)"
+        run: terraform plan
 
-  apply-terraform:
-    runs-on: self-hosted
-    needs: init-terraform
-
-    steps:
       - name: Apply Terraform
-        if: ${{ needs.init-terraform.outputs.plan-has-changes == 'true' }}
         working-directory: /home/joris/azure/terraform
         run: terraform apply -auto-approve
 
@@ -90,24 +81,9 @@ jobs:
     needs: init-terraform
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2  # Fetch enough history to compare
-
-      - name: Vérification des modifications dans index.php
-        id: check-index
-        run: |
-          if git diff --name-only HEAD~1 HEAD | grep -q 'index.php'; then
-            echo "index_changed=true" >> $GITHUB_ENV
-          else
-            echo "index_changed=false" >> $GITHUB_ENV
-          fi
-
       - name: Deploiement AppService
         run: |
           az webapp deployment source sync --name tp-azure-jpab --resource-group Azure
-        if: env.index_changed == 'true'
 
       - name: Vérifier le statut de l'application
         run: |
