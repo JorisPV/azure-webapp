@@ -14,8 +14,6 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: Verification du code
-      uses: actions/checkout@v3
 
     - name: Vérification des secrets Azure
       run: |
