@@ -8,8 +8,8 @@ Présentation oral : 18/07
 
 # Analyse budgétaire du projet
 
-https://azure.com/e/c9559134339742c18bb1ecbecdf75933
-Coût : 92,77€
+- https://azure.com/e/c9559134339742c18bb1ecbecdf75933
+- Coût : 92,77€
 
 # Déployer l'infrastructure
 
