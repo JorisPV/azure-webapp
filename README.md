@@ -31,24 +31,35 @@ sudo apt-get install terraform
 
 ### Etape 3 : Installer Azure CLI
 
-- curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
 
 ### Etape 4 : Créer un utilisateur RBAC
 
-- az ad sp create-for-rbac --name "Azure" --role contributor --scopes /subscriptions/c8cdc2f3-9a36-403d-8d8f-2eb1cd887422
+```
+az ad sp create-for-rbac --name "Azure" --role contributor --scopes /subscriptions/c8cdc2f3-9a36-403d-8d8f-2eb1cd887422
+```
 
 /!\ Il faut changer la subscription trouvable ici : https://portal.azure.com/#view/Microsoft_Azure_Billing/SubscriptionsBladeV1 /!\
 
 ### Etape 5 : Clôner le répertoire sur Github
 
+- Se rendre sur https://github.com/JorisPV/azure-webapp
+- Cliquer sur "Fork"
+
 ### Etape 6 : Créer un token Github
 
 - Créer un token ici : https://github.com/settings/tokens
 - Créer un fichier variables.tf avec le token généré
+
+```
 variable "github_auth_token" {
   type = string
   default = "id"
 }
+```
+
 - Clôner le répertoire sur la machine Ubuntu (git clone <url de votre répo>)
 
 ### Etape 7 : Installer un Runner
