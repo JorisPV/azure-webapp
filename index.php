@@ -96,7 +96,7 @@
     <div id="form-container" class="container" style="max-width: 600px;">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">TP - Azure - Joris PARMENTIER - Améline BODELE - 5 SRC - ESGI</h3>
+                <h3 class="panel-title">test</h3>
             </div>
             <div class="panel-body">
                 <form>
