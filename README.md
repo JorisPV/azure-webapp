@@ -6,21 +6,28 @@ Présentation oral : 18/07
 
 ![Schema](https://acenox.fr/projet/esgi/schema.png)
 
+# Analyse budgétaire du projet
+
+https://azure.com/e/c9559134339742c18bb1ecbecdf75933
+Coût : 92,77€
+
 # Déployer l'infrastructure
 
 ### Etape 1 : Créer une VM Ubuntu
 
 ### Etape 2 : Installer Terraform
 
-- sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
-- wget -O- https://apt.releases.hashicorp.com/gpg | \
+```
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+wget -O- https://apt.releases.hashicorp.com/gpg | \
 gpg --dearmor | \
 sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
-- echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
 https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
 sudo tee /etc/apt/sources.list.d/hashicorp.list
-- sudo apt update
-- sudo apt-get install terraform
+sudo apt update
+sudo apt-get install terraform
+```
 
 ### Etape 3 : Installer Azure CLI
 
